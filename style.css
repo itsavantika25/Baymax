@@ -1,16 +1,8 @@
-
-/* ==========================================================
-   BAYMAX RUNNER
-   Visual direction: Retro arcade · Cosmic sci-fi · Magenta
-   ========================================================== */
-
-/* ---------- FONTS ---------- */
-
 @font-face {
   font-family: 'DePixel';
   src: url('assets/fonts/depixel/depixelklein.woff2') format('woff2'),
-       url('assets/fonts/depixel/depixelklein.woff') format('woff'),
-       url('assets/fonts/depixel/DePixelKlein.ttf') format('truetype');
+    url('assets/fonts/depixel/depixelklein.woff') format('woff'),
+    url('assets/fonts/depixel/DePixelKlein.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -19,8 +11,8 @@
 @font-face {
   font-family: 'DePixel';
   src: url('assets/fonts/depixel/depixelhalbfett.woff2') format('woff2'),
-       url('assets/fonts/depixel/depixelhalbfett.woff') format('woff'),
-       url('assets/fonts/depixel/DePixelHalbfett.ttf') format('truetype');
+    url('assets/fonts/depixel/depixelhalbfett.woff') format('woff'),
+    url('assets/fonts/depixel/DePixelHalbfett.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -29,8 +21,8 @@
 @font-face {
   font-family: 'DePixel Breit';
   src: url('assets/fonts/depixel/depixelbreit.woff2') format('woff2'),
-       url('assets/fonts/depixel/depixelbreit.woff') format('woff'),
-       url('assets/fonts/depixel/DePixelBreit.ttf') format('truetype');
+    url('assets/fonts/depixel/depixelbreit.woff') format('woff'),
+    url('assets/fonts/depixel/DePixelBreit.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -39,8 +31,8 @@
 @font-face {
   font-family: 'DePixel Breit';
   src: url('assets/fonts/depixel/depixelbreitfett.woff2') format('woff2'),
-       url('assets/fonts/depixel/depixelbreitfett.woff') format('woff'),
-       url('assets/fonts/depixel/DePixelBreitFett.ttf') format('truetype');
+    url('assets/fonts/depixel/depixelbreitfett.woff') format('woff'),
+    url('assets/fonts/depixel/DePixelBreitFett.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -49,14 +41,14 @@
 @font-face {
   font-family: 'DePixel Schmal';
   src: url('assets/fonts/depixel/depixelschmal.woff2') format('woff2'),
-       url('assets/fonts/depixel/depixelschmal.woff') format('woff'),
-       url('assets/fonts/depixel/DePixelSchmal.ttf') format('truetype');
+    url('assets/fonts/depixel/depixelschmal.woff') format('woff'),
+    url('assets/fonts/depixel/DePixelSchmal.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-/* ---------- DESIGN TOKENS ---------- */
+/* Dzn */
 
 :root {
   color-scheme: dark;
@@ -89,7 +81,7 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ---------- RESET ---------- */
+/* Reset */
 
 *,
 *::before,
@@ -120,7 +112,7 @@ button:focus-visible {
   outline-offset: 5px;
 }
 
-/* ---------- GAME STAGE ---------- */
+/* Game stage */
 
 #game-wrapper {
   position: relative;
@@ -130,15 +122,12 @@ button:focus-visible {
   height: 100dvh;
   overflow: hidden;
   background:
-    radial-gradient(
-      ellipse at 52% 42%,
+    radial-gradient(ellipse at 52% 42%,
       rgba(61, 0, 96, 0.25),
-      transparent 58%
-    ),
+      transparent 58%),
     var(--purple-deep);
 }
 
-/* Keep the canvas behind the interface. */
 
 #game-canvas {
   position: absolute;
@@ -151,7 +140,7 @@ button:focus-visible {
   outline: none;
 }
 
-/* ---------- OVERLAY SCREENS ---------- */
+/* Overlay screens */
 
 .overlay {
   position: absolute;
@@ -166,12 +155,10 @@ button:focus-visible {
   overflow-y: auto;
 
   background:
-    radial-gradient(
-      ellipse at 50% 42%,
+    radial-gradient(ellipse at 50% 42%,
       rgba(48, 0, 70, 0.76) 0%,
       rgba(20, 0, 31, 0.91) 48%,
-      rgba(7, 0, 13, 0.97) 100%
-    );
+      rgba(7, 0, 13, 0.97) 100%);
 
   opacity: 0;
   visibility: hidden;
@@ -188,7 +175,6 @@ button:focus-visible {
   pointer-events: auto;
 }
 
-/* Fine atmospheric texture without interfering with gameplay. */
 
 .overlay::before {
   content: '';
@@ -205,20 +191,16 @@ button:focus-visible {
   background-position: 12px 19px, 43px 62px;
 }
 
-/* ---------- START SCREEN ---------- */
+/* Start screen */
 
 #start-screen {
   background:
-    radial-gradient(
-      ellipse at 50% 43%,
+    radial-gradient(ellipse at 50% 43%,
       rgba(70, 0, 100, 0.40),
-      transparent 48%
-    ),
-    radial-gradient(
-      ellipse at center,
+      transparent 48%),
+    radial-gradient(ellipse at center,
       rgba(25, 0, 40, 0.91),
-      rgba(7, 0, 13, 0.98)
-    );
+      rgba(7, 0, 13, 0.98));
 }
 
 .start-content {
@@ -269,7 +251,6 @@ button:focus-visible {
   opacity: 0.78;
 }
 
-/* ---------- BAYMAX CHARACTER ---------- */
 
 .start-baymax-art {
   position: relative;
@@ -307,8 +288,6 @@ button:focus-visible {
   object-fit: contain;
   image-rendering: pixelated;
 }
-
-/* ---------- CONTROL HINTS ---------- */
 
 .controls-hint {
   display: flex;
@@ -348,7 +327,7 @@ button:focus-visible {
   border-radius: 3px;
 }
 
-/* ---------- BUTTONS ---------- */
+/* Buttons */
 
 .btn-primary {
   position: relative;
@@ -407,7 +386,7 @@ button:focus-visible {
   transform: none;
 }
 
-/* ---------- MENU STAR FIELD ---------- */
+/* Menu star field */
 
 .star-field {
   position: absolute;
@@ -417,13 +396,12 @@ button:focus-visible {
   pointer-events: none;
 }
 
-/* Stars may be created dynamically by JavaScript. */
 
-.star-field > * {
+.star-field>* {
   pointer-events: none;
 }
 
-/* ---------- GAME HUD ---------- */
+/* HUD */
 
 #hud {
   position: absolute;
@@ -508,12 +486,10 @@ button:focus-visible {
 
   width: 35%;
 
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.22),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.22),
+      transparent);
 
   animation: shimmer 3.2s linear infinite;
   pointer-events: none;
@@ -540,7 +516,7 @@ button:focus-visible {
   text-shadow: none;
 }
 
-/* ---------- BOSS HP BAR (Reference style) ---------- */
+
 #boss-hp-container {
   display: flex;
   align-items: center;
@@ -593,7 +569,7 @@ button:focus-visible {
   filter: drop-shadow(0 0 6px rgba(255, 77, 184, 0.6));
 }
 
-/* ---------- BOSS SPRITE (ANIMATED GIF) ---------- */
+
 #boss-sprite {
   position: absolute;
   z-index: 15;
@@ -619,11 +595,13 @@ button:focus-visible {
     opacity: 1;
     filter: brightness(3);
   }
+
   40% {
     transform: scale(1.35);
     opacity: 0.9;
     filter: brightness(3) drop-shadow(0 0 30px #ff3366);
   }
+
   100% {
     transform: scale(0.1);
     opacity: 0;
@@ -631,15 +609,13 @@ button:focus-visible {
   }
 }
 
-/* ---------- GAME OVER SCREEN ---------- */
+/* Game over screen */
 
 #gameover-screen {
   background:
-    radial-gradient(
-      ellipse at 50% 43%,
+    radial-gradient(ellipse at 50% 43%,
       rgba(95, 0, 28, 0.35),
-      transparent 55%
-    ),
+      transparent 55%),
     rgba(8, 0, 13, 0.95);
 }
 
@@ -706,15 +682,13 @@ button:focus-visible {
   font-weight: 700;
 }
 
-/* ---------- WIN SCREEN ---------- */
+/* Win screen */
 
 #win-screen {
   background:
-    radial-gradient(
-      ellipse at 50% 42%,
+    radial-gradient(ellipse at 50% 42%,
       rgba(130, 70, 0, 0.32),
-      transparent 55%
-    ),
+      transparent 55%),
     rgba(8, 0, 13, 0.95);
 }
 
@@ -783,7 +757,7 @@ button:focus-visible {
   pointer-events: none;
 }
 
-/* Modal action buttons */
+/* Modal buttons */
 #gameover-screen .btn-primary,
 #win-screen .btn-primary {
   width: min(100%, 300px);
@@ -794,7 +768,7 @@ button:focus-visible {
   letter-spacing: 0.1em;
 }
 
-/* ---------- LEVEL UP ---------- */
+/* Level-up */
 
 #levelup-overlay {
   position: absolute;
@@ -825,9 +799,10 @@ button:focus-visible {
     0 0 45px rgba(192, 0, 106, 0.32);
 }
 
-/* ---------- ANIMATIONS ---------- */
+/* Animations */
 
 @keyframes titlePulse {
+
   0%,
   100% {
     text-shadow:
@@ -843,6 +818,7 @@ button:focus-visible {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
@@ -892,8 +868,6 @@ button:focus-visible {
   }
 }
 
-/* ---------- RESPONSIVE: TABLETS ---------- */
-
 @media (max-width: 700px) {
   #hud {
     top: 12px;
@@ -939,7 +913,6 @@ button:focus-visible {
   }
 }
 
-/* ---------- RESPONSIVE: PHONES ---------- */
 
 @media (max-width: 430px) {
   #hud {
@@ -1024,7 +997,6 @@ button:focus-visible {
   }
 }
 
-/* ---------- SHORT SCREENS / LANDSCAPE ---------- */
 
 @media (max-height: 600px) {
   .overlay {
@@ -1070,9 +1042,8 @@ button:focus-visible {
   }
 }
 
-/* ---------- REDUCED MOTION ---------- */
-
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

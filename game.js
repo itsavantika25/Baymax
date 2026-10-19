@@ -1,5 +1,5 @@
 
-// ---------- ASSETS ----------
+// Assets
 const ASSETS = {
   baymax_high:  'assets/game assets/baymax high hp.svg',
   baymax_mid:   'assets/game assets/baymax mid hp.svg',
@@ -8,7 +8,7 @@ const ASSETS = {
   debris1b:     'assets/game assets/debris 1 broken.svg',
   debris2:      'assets/game assets/debris 2 full.svg',
   debris2b:     'assets/game assets/debris 2 broken.svg',
-  portal:       'assets/Portal.png',
+  portal:       'assets/Portal.PNG',
   bg:           'assets/game assets/portal dimension svg.svg',
   boss:         'assets/game assets/Transparentbgmonstie.GIF',
   boss_icon:    'assets/game assets/Monster hp icon.PNG',
@@ -20,7 +20,16 @@ function loadImages(done) {
   let remaining = assetKeys.length;
   assetKeys.forEach(key => {
     const image = new Image();
-    image.onload = image.onerror = () => {
+    image.onload = () => {
+      remaining--;
+      if (remaining === 0) done();
+    };
+    image.onerror = () => {
+      if (key === 'portal' && !image._fallback) {
+        image._fallback = true;
+        image.src = image.src.endsWith('.PNG') ? 'assets/Portal.png' : 'assets/Portal.PNG';
+        return;
+      }
       remaining--;
       if (remaining === 0) done();
     };
@@ -32,7 +41,7 @@ function imgOk(image) {
   return !!image && image.complete && image.naturalWidth > 0;
 }
 
-// ---------- CANVAS ----------
+// Canvas
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 let S = 1;
@@ -57,7 +66,7 @@ const PICKUP_DURATION = 8000;
 function gameSpeed() {
   return 7.2 + (level - 1) * 2.2;
 }
-// ---------- GAME STATE ----------
+// Game state
 let gameState = 'start';
 let score = 0;
 let level = 1;
@@ -74,7 +83,7 @@ let portalNoticeTimer = 0;
 let muted = false;
 let audioCtx = null;
 
-// ---------- AUDIO ----------
+// Audio
 function tone(startFreq, endFreq, duration, type = 'sine', volume = 0.035) {
   if (muted) return;
   try {
@@ -93,7 +102,7 @@ function tone(startFreq, endFreq, duration, type = 'sine', volume = 0.035) {
     oscillator.start(now);
     oscillator.stop(now + duration);
   } catch (_) {
-    // Audio is optional.
+    // audio is optional
   }
 }
 const sfx = {
@@ -108,7 +117,7 @@ const sfx = {
   },
 };
 
-// ---------- INPUT ----------
+// Input
 const held = new Set();
 const BLOCKED_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'];
 const isDown = (...codes) => codes.some(code => held.has(code));
@@ -121,7 +130,7 @@ window.addEventListener('keydown', event => {
 window.addEventListener('keyup', event => held.delete(event.code));
 window.addEventListener('blur', () => held.clear());
 
-// ---------- PLAYER ----------
+// Baymax (player)
 const player = {
   x: 0, y: 0, w: 118, h: 118,
   vy: 0,
@@ -146,7 +155,7 @@ function resetPlayer() {
   player.approaching = false;
 }
 
-// ---------- WORLD ----------
+// World objects
 const asteroids = [];
 const lasers = [];
 const pickups = [];
@@ -154,11 +163,11 @@ const particles = [];
 const floaters = [];
 const stars = [];
 
-const KINDS = {
-  tiny:   { min: 24, max: 34,  hp: 1, speed: 1.45, points: 35 },
-  small:  { min: 38, max: 50,  hp: 1, speed: 1.20, points: 25 },
-  medium: { min: 56, max: 76,  hp: 2, speed: 0.95, points: 20 },
-  large:  { min: 86, max: 110, hp: 3, speed: 0.72, points: 50 },
+const ROCK_KINDS = {
+  tiny:   { min: 24,  max: 34,  hp: 1, speed: 1.45, points: 35 },
+  small:  { min: 38,  max: 50,  hp: 1, speed: 1.20, points: 25 },
+  medium: { min: 56,  max: 76,  hp: 2, speed: 0.95, points: 20 },
+  large:  { min: 86,  max: 110, hp: 3, speed: 0.72, points: 50 },
   huge:   { min: 120, max: 155, hp: 4, speed: 0.55, points: 80 },
 };
 const rand = (min, max) => min + Math.random() * (max - min);
@@ -168,7 +177,7 @@ function bounds() {
 }
 
 function makeAsteroid(kind, x, y, speedMultiplier = 1) {
-  const def = KINDS[kind];
+  const def = ROCK_KINDS[kind];
   const size = rand(def.min, def.max) * S;
   return {
     kind, x, y, w: size, h: size,
@@ -212,7 +221,7 @@ function spawnAsteroid(offsetX = 0, targetY = null) {
 function spawnBoulderPattern() {
   const { top, bottom } = bounds();
   const y = rand(top + 80 * S, bottom - 120 * S);
-  // Leader huge/large rock flanked by swift smaller asteroids
+  // big rock flanked by two fast ones
   asteroids.push(makeAsteroid('huge', canvas.width + 60, y));
   asteroids.push(makeAsteroid('tiny', canvas.width + 160, y - 85 * S, 1.1));
   asteroids.push(makeAsteroid('tiny', canvas.width + 180, y + 95 * S, 1.1));
@@ -221,7 +230,6 @@ function spawnBoulderPattern() {
 function spawnDoublePattern() {
   const { top, bottom } = bounds();
   const usable = bottom - top;
-  // Two asteroids at distinct heights leaving clear fly lanes
   const y1 = top + rand(0, usable * 0.35);
   const y2 = top + rand(usable * 0.55, usable - 60 * S);
   spawnAsteroid(0, y1);
@@ -232,34 +240,20 @@ function spawnPattern() {
   const roll = Math.random();
 
   if (level === 1) {
-    // Level 1: Mostly single asteroids and occasional doubles for a comfortable opening
-    if (roll < 0.72) {
-      spawnAsteroid();
-    } else {
-      spawnDoublePattern();
-    }
+    if (roll < 0.72) spawnAsteroid();
+    else             spawnDoublePattern();
   } else if (level === 2) {
-    // Level 2: Healthy mix of singles and doubles
-    if (roll < 0.45) {
-      spawnAsteroid();
-    } else if (roll < 0.85) {
-      spawnDoublePattern();
-    } else {
-      spawnBoulderPattern();
-    }
+    if (roll < 0.45)      spawnAsteroid();
+    else if (roll < 0.85) spawnDoublePattern();
+    else                  spawnBoulderPattern();
   } else {
-    // Level 3+: Intense multi-threat waves and formed clusters
-    if (roll < 0.28) {
-      spawnAsteroid();
-    } else if (roll < 0.68) {
-      spawnDoublePattern();
-    } else {
-      spawnBoulderPattern();
-    }
+    if (roll < 0.28)      spawnAsteroid();
+    else if (roll < 0.68) spawnDoublePattern();
+    else                  spawnBoulderPattern();
   }
 }
 
-// ---------- PICKUPS ----------
+// Pickups
 const PICKUPS = {
   repair: { color: '#00ff99', label: '+', name: 'HEAL' },
   shield: { color: '#00eaff', label: 'S', name: 'SHIELD' },
@@ -302,7 +296,7 @@ function collectPickup(pickup) {
   addFloater(player.x + player.w / 2, player.y - 10, message, def.color);
 }
 
-// ---------- BOSS (TENTACLE MONSTER) ----------
+// Monstie
 const BOSS_MAX_HP = 40;
 const boss = {
   active: false,
@@ -318,6 +312,7 @@ const boss = {
   beamChargeTimer: 0,
   beamFiringTimer: 0,
   beamY: 0,
+  beamTilt: 0,
   flash: 0,
   defeated: false,
 };
@@ -340,10 +335,11 @@ function spawnBoss() {
   boss.attackPattern = 0;
   boss.beamChargeTimer = 0;
   boss.beamFiringTimer = 0;
+  boss.beamTilt = 0;
   boss.flash = 0;
   bossProjectiles.length = 0;
 
-  // Clear ordinary asteroids for the duel
+  //bye bye rocks
   asteroids.length = 0;
   sfx.bossRoar();
   shake = 15;
@@ -390,7 +386,6 @@ function defeatBoss() {
   shake = 22;
   score += 2000;
 
-  // Trigger POOF animation and remove boss sprite
   const bossSprite = document.getElementById('boss-sprite');
   if (bossSprite) {
     bossSprite.classList.add('poof');
@@ -408,28 +403,24 @@ function defeatBoss() {
   const bossHud = document.getElementById('boss-hp-container');
   if (bossHud) bossHud.classList.remove('active');
 
-  // Baymax immediately starts auto-centering for portal entry
+
   player.approaching = true;
 
-  // Spawn reward pickups
-  spawnPickup(boss.x + 20, boss.y + 40, 'repair');
-  spawnPickup(boss.x + 40, boss.y + 120, 'shield');
-
-  // Large dimensional portal opens!
   setTimeout(() => {
     spawnPortal();
   }, 1000);
 }
 
-// ---------- PORTAL (ENLARGED) ----------
+// Portal magic :)
 const portal = {
-  active: false, x: 0, y: 0, w: 320, h: 460,
+  active: false, x: 0, y: 0, w: 360, h: 360,
   targetX: 0, stopped: false,
 };
 
 function spawnPortal() {
-  portal.w = 320 * S;
-  portal.h = 460 * S;
+  const size = 360 * S;
+  portal.w = size;
+  portal.h = size;
   portal.active = true;
   portal.stopped = false;
   portal.x = canvas.width + 150;
@@ -442,7 +433,7 @@ function spawnPortal() {
   addFloater(canvas.width / 2, canvas.height * 0.25, 'PORTAL OPEN! ENTERING DIMENSION...', '#00f5ff');
 }
 
-// ---------- EFFECTS ----------
+// Effects
 function createParticles(x, y, color, count = 8) {
   for (let i = 0; i < count; i++) {
     const angle = Math.random() * Math.PI * 2;
@@ -498,12 +489,12 @@ if (!document.getElementById('baymax-twinkle-style')) {
   document.head.appendChild(style);
 }
 
-// ---------- COLLISION ----------
+// Collision
 function rectOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
   return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
 }
 
-// ---------- RESET ----------
+// Reset
 function initGame() {
   score = 0;
   level = 1;
@@ -527,6 +518,7 @@ function initGame() {
   boss.active = false;
   boss.spawned = false;
   boss.defeated = false;
+  boss.beamTilt = 0;
   bossProjectiles.length = 0;
   const bossSprite = document.getElementById('boss-sprite');
   if (bossSprite) {
@@ -542,7 +534,7 @@ function initGame() {
   updateHUD();
 }
 
-// ---------- HEALTH / DAMAGE ----------
+// Health / damage
 function hurtPlayer() {
   if (player.shield > 0) {
     player.shield = 0;
@@ -582,13 +574,12 @@ function damageAsteroid(asteroid, damage = 1) {
   addFloater(cx, cy, '+' + asteroid.points, '#ffffff');
   sfx.break();
 
-  // A pickup appears sometimes, rather than constantly.
   if (Math.random() < 0.12) spawnPickup(cx, cy);
   updateHUD();
   return true;
 }
 
-// ---------- SHOOTING ----------
+// Shooting
 function fireLaser() {
   const x = player.x + player.w * 0.90;
   const y = player.y + player.h * 0.5;
@@ -598,13 +589,13 @@ function fireLaser() {
     lasers.push({ x, y, vy: -2.4 });
     lasers.push({ x, y, vy: 2.4 });
   }
-  // Muzzle flash particle burst
+  // muzzle flash
   createParticles(x, y, '#00f5ff', 4);
   createParticles(x + 4, y, '#ffffff', 2);
   sfx.shoot();
 }
 
-// ---------- LEVEL-UP UI ----------
+// Level-up UI
 function triggerLevelUp() {
   levelUpAnimTimer = 1800;
   const overlay = document.getElementById('levelup-overlay');
@@ -628,7 +619,7 @@ function triggerLevelUp() {
   }
 }
 
-// ---------- UPDATE ----------
+// Update loop
 function update(dt) {
   const W = canvas.width;
   const H = canvas.height;
@@ -647,10 +638,9 @@ function update(dt) {
   }
   portalNoticeTimer = Math.max(0, portalNoticeTimer - dt);
 
-  // Small survival bonus; asteroid kills remain the main score source.
   if (!portal.active) score += dt / 1000 * 2;
 
-  // Progression through levels 1 to MAX_LEVEL
+  // level progression
   const targetLevel = Math.min(MAX_LEVEL, 1 + Math.floor(runTime / LEVEL_TIME));
   if (targetLevel > level && !boss.active && !portal.active) {
     level = targetLevel;
@@ -668,25 +658,22 @@ function update(dt) {
     sfx.level();
   }
 
-  // Fallback trigger if in boss level and boss not yet spawned
+  // fallback in case monstie didn't spawn on level-up
   if (level >= MAX_LEVEL && !boss.active && !boss.spawned && !boss.defeated && !portal.active) {
     spawnBoss();
   }
 
-  // Movement handling:
-  // When portal is opening or active (boss defeated), player loses control and Baymax auto-centers on Y
+  // player movement
   if (player.approaching) {
-    // Smoothly glide to vertical center
+
     const targetY = canvas.height / 2 - player.h / 2;
     player.y += (targetY - player.y) * 0.05 * k;
     player.vy = 0;
 
-    // Once portal is locked on right, glide into the portal center
     if (portal.active && portal.stopped) {
       player.x += 3.6 * k;
     }
   } else {
-    // Strictly vertical player control (Up / Down)
     const iy = (isDown('ArrowDown', 'KeyS') ? 1 : 0) - (isDown('ArrowUp', 'KeyW') ? 1 : 0);
     const accel = (1.1 + level * 0.05) * k;
 
@@ -695,14 +682,11 @@ function update(dt) {
     player.vy *= damping;
     player.y += player.vy * k;
 
-    // Locked horizontal position during active play
     player.x = canvas.width * 0.12;
-
-    // Keep Baymax inside the playable area.
     player.y = Math.max(H * 0.04, Math.min(H * 0.94 - player.h, player.y));
   }
 
-  // Engine trail.
+  // engine trail
   particles.push({
     x: player.x + 5,
     y: player.y + player.h / 2 + rand(-7, 7),
@@ -711,14 +695,14 @@ function update(dt) {
     life: 1, decay: 0.075, radius: rand(2, 3) * S, color: '#ff65bd',
   });
 
-  // Shooting.
+  // shooting
   player.shotTimer -= dt;
   if (isDown('Space') && player.shotTimer <= 0) {
     fireLaser();
     player.shotTimer = player.rapid > 0 ? RAPID_COOLDOWN : SHOT_COOLDOWN;
   }
 
-  // Timers.
+  // timers
   if (player.invincible) {
     player.invTimer -= dt;
     if (player.invTimer <= 0) player.invincible = false;
@@ -730,7 +714,7 @@ function update(dt) {
   if (shake < 0.25) shake = 0;
   hitFlash = Math.max(0, hitFlash - dt / 500);
 
-  // Lasers.
+  // cool ass lasers
   for (let i = lasers.length - 1; i >= 0; i--) {
     const laser = lasers[i];
     laser.x += 14 * k;
@@ -738,31 +722,29 @@ function update(dt) {
     if (laser.x > W + 50 || laser.y < -20 || laser.y > H + 20) lasers.splice(i, 1);
   }
 
-  // Asteroid spawning — gentle on Level 1, scaling up; pauses during boss fight & portal
+  // asteroid spawning
   if (!portal.active && !boss.active) {
     spawnTimer -= dt;
     if (spawnTimer <= 0) {
       spawnPattern();
-      // Level 1: ~780ms - 980ms; Level 4: ~360ms - 450ms
       const baseCadence = Math.max(360, 880 - (level - 1) * 165);
       spawnTimer = baseCadence * rand(0.9, 1.15);
     }
   }
 
-  // ---------- BOSS UPDATE ----------
+  // Monstie update
   if (boss.active && !boss.defeated) {
     const bTop = H * 0.07;
     const bBot = H * 0.89 - boss.h;
 
-    // Slide in
+    // slide in from the right
     if (boss.x > boss.targetX) {
       boss.x -= 3.2 * k;
     } else {
-      // FREEZE IN PLACE WHILE CHARGING OR FIRING DEATH BEAM!
       const isChargingOrFiringBeam = (boss.beamChargeTimer > 0 || boss.beamFiringTimer > 0);
 
       if (!isChargingOrFiringBeam) {
-        // 1. ADVANCED EVASION: actively dodge incoming player lasers!
+        // dodge said cool ass lasers
         let avoidDir = 0;
         const bCenterY = boss.y + boss.h / 2;
         for (let j = 0; j < lasers.length; j++) {
@@ -785,7 +767,7 @@ function update(dt) {
         if (boss.y > bBot) { boss.y = bBot; boss.vy = -Math.abs(boss.vy); }
       }
 
-      // 2. BOSS ATTACK VARIETY
+      // attack patterns
       boss.attackTimer -= dt;
       if (boss.attackTimer <= 0) {
         boss.attackPattern = (boss.attackPattern + 1) % 4;
@@ -794,7 +776,7 @@ function update(dt) {
         const targetCy = player.y + player.h * 0.5;
 
         if (boss.attackPattern === 0) {
-          // Pattern A: Rapid Twin Void Torpedoes
+          // torpedos idk how to spell
           boss.attackTimer = 850;
           const angle = Math.atan2(targetCy - originY, player.x - originX);
           bossProjectiles.push({
@@ -809,7 +791,7 @@ function update(dt) {
           });
           sfx.shoot();
         } else if (boss.attackPattern === 1) {
-          // Pattern B: 3-Way Void Nebula Burst
+          // 3 attack thingy
           boss.attackTimer = 1100;
           const baseAngle = Math.atan2(targetCy - originY, player.x - originX);
           [-0.28, 0, 0.28].forEach(spread => {
@@ -822,34 +804,40 @@ function update(dt) {
           });
           sfx.shoot();
         } else if (boss.attackPattern === 2) {
-          // Pattern C: DEADLY ONE-SHOT VOID EYE
+          // one shot orb thingy
           boss.attackTimer = 1700;
           const angle = Math.atan2(targetCy - originY, player.x - originX);
           bossProjectiles.push({
             x: originX, y: originY,
             vx: Math.cos(angle) * 5.2, vy: Math.sin(angle) * 5.2,
-            radius: 26 * S, color: '#ff0033', oneShot: true, kind: 'doom',
+            radius: 26 * S, color: '#e60c37e6', oneShot: true, kind: 'doom',
           });
           shake = 8;
           sfx.bossRoar();
           addFloater(boss.x, boss.y - 14, 'ONE-SHOT VOID EYE!', '#ff0033');
         } else {
-          // Pattern D: TELEGRAPHED DEATH BEAM
-          // Lock the beam Y origin right to the monster's current center!
+          // death beam XX
           boss.attackTimer = 2200;
-          boss.beamChargeTimer = 750; // Telegraphed line
-          boss.beamY = boss.y + boss.h * 0.5; // Starts precisely from monster core!
+          boss.beamChargeTimer = 750;
+          boss.beamY = boss.y + boss.h * 0.5;
+          const pCy = player.y + player.h * 0.5;
+          const pCx = player.x + player.w * 0.5;
+          const fullAngle = Math.atan2(pCy - boss.beamY, Math.max(100, (boss.x + 40) - pCx));
+          boss.beamTilt = Math.max(-0.25, Math.min(0.25, fullAngle * 0.45));
           addFloater(canvas.width * 0.5, boss.beamY - 14, '! DEATH BEAM CHARGING !', '#ff0033');
         }
       }
 
-      // Handle Death Beam Attack
+      // death beam charge
       if (boss.beamChargeTimer > 0) {
         boss.beamChargeTimer -= dt;
-        // Keep beam centered on the locked boss body
         boss.beamY = boss.y + boss.h * 0.5;
+        const pCy = player.y + player.h * 0.5;
+        const pCx = player.x + player.w * 0.5;
+        const fullAngle = Math.atan2(pCy - boss.beamY, Math.max(100, (boss.x + 40) - pCx));
+        boss.beamTilt = Math.max(-0.25, Math.min(0.25, fullAngle * 0.45));
         if (boss.beamChargeTimer <= 0) {
-          boss.beamFiringTimer = 450;
+          boss.beamFiringTimer = 850;
           shake = 14;
           sfx.bossRoar();
         }
@@ -857,8 +845,14 @@ function update(dt) {
       if (boss.beamFiringTimer > 0) {
         boss.beamFiringTimer -= dt;
         boss.beamY = boss.y + boss.h * 0.5;
+        const pCy = player.y + player.h * 0.5;
+        const pCx = player.x + player.w * 0.5;
+        const fullAngle = Math.atan2(pCy - boss.beamY, Math.max(100, (boss.x + 40) - pCx));
+        boss.beamTilt = Math.max(-0.25, Math.min(0.25, fullAngle * 0.45));
         const bHalf = 32 * S;
-        if (player.y + player.h > boss.beamY - bHalf && player.y < boss.beamY + bHalf) {
+        const beamX = boss.x + 40;
+        const beamYAtPlayer = boss.beamY + (beamX - pCx) * Math.sin(boss.beamTilt);
+        if (player.y + player.h > beamYAtPlayer - bHalf && player.y < beamYAtPlayer + bHalf) {
           if (!player.invincible) {
             hurtPlayer();
             if (player.hp > 0 && !player.shield) hurtPlayer();
@@ -869,7 +863,6 @@ function update(dt) {
 
     boss.flash = Math.max(0, boss.flash - dt / 150);
 
-    // Sync animated GIF DOM element with boss position & hit flash
     const bossSprite = document.getElementById('boss-sprite');
     if (bossSprite) {
       bossSprite.style.left = `${boss.x}px`;
@@ -883,7 +876,7 @@ function update(dt) {
       }
     }
 
-    // Boss vs Lasers
+    //boss v lazer
     for (let j = lasers.length - 1; j >= 0; j--) {
       const laser = lasers[j];
       if (rectOverlap(laser.x, laser.y - 5, 30, 10, boss.x + 20, boss.y + 20, boss.w - 40, boss.h - 40)) {
@@ -892,7 +885,6 @@ function update(dt) {
       }
     }
 
-    // Boss body vs Baymax
     const pInset = 20 * S;
     if (rectOverlap(
       player.x + pInset, player.y + pInset, player.w - pInset * 2, player.h - pInset * 2,
@@ -902,13 +894,13 @@ function update(dt) {
     }
   }
 
-  // ---------- BOSS PROJECTILES UPDATE ----------
+  // boss projectile
   for (let i = bossProjectiles.length - 1; i >= 0; i--) {
     const bp = bossProjectiles[i];
     bp.x += bp.vx * k;
     bp.y += bp.vy * k;
 
-    // Hit Baymax
+    // hit Baymax
     const pInset = 16 * S;
     if (rectOverlap(
       player.x + pInset, player.y + pInset, player.w - pInset * 2, player.h - pInset * 2,
@@ -917,7 +909,6 @@ function update(dt) {
       bossProjectiles.splice(i, 1);
       createParticles(bp.x, bp.y, bp.color, 12);
       if (bp.oneShot) {
-        // Deadly one shot strike!
         hurtPlayer();
         if (player.hp > 0 && !player.shield) player.hp = 0;
         updateHPBar();
@@ -928,7 +919,7 @@ function update(dt) {
       continue;
     }
 
-    // Hit by laser
+    // shot hit by laser
     for (let j = lasers.length - 1; j >= 0; j--) {
       const laser = lasers[j];
       if (rectOverlap(laser.x, laser.y - 5, 25, 10, bp.x - bp.radius, bp.y - bp.radius, bp.radius * 2, bp.radius * 2)) {
@@ -946,7 +937,7 @@ function update(dt) {
     }
   }
 
-  // Asteroids and collisions.
+  // asteroids hehe
   const area = bounds();
   for (let i = asteroids.length - 1; i >= 0; i--) {
     const asteroid = asteroids[i];
@@ -990,7 +981,7 @@ function update(dt) {
     }
   }
 
-  // Pickups.
+  // pickups
   for (let i = pickups.length - 1; i >= 0; i--) {
     const pickup = pickups[i];
     pickup.x -= speed * 0.5;
@@ -1009,7 +1000,7 @@ function update(dt) {
     }
   }
 
-  // Portal approaches from the right, then Baymax flies into it automatically.
+ 
   if (portal.active && !portal.stopped) {
     portal.x -= 4.2 * k;
     if (portal.x <= portal.targetX) {
@@ -1031,7 +1022,7 @@ function update(dt) {
     }
   }
 
-  // Particles and text.
+  // particles and floaters
   for (let i = particles.length - 1; i >= 0; i--) {
     const particle = particles[i];
     particle.x += particle.vx * k;
@@ -1046,7 +1037,7 @@ function update(dt) {
     if (floater.life <= 0) floaters.splice(i, 1);
   }
 
-  // Background stars.
+  // background stars
   stars.forEach(star => {
     star.x -= star.speed * k;
     if (star.x < 0) {
@@ -1062,12 +1053,10 @@ function update(dt) {
   }
 }
 
-// ---------- DRAW: BACKGROUND ----------
-
+//bg
 function drawBackground(W, H) {
   const bg = images.bg;
   if (imgOk(bg)) {
-    // mirrored tiling: every other tile is flipped, so the seam is invisible
     const sc = bgScroll % (W * 2);
     for (let k = 0; k <= 3; k++) {
       const x = k * W - sc;
@@ -1129,7 +1118,7 @@ function draw() {
   }
 }
 
-// ---------- DRAW: BOSS EFFECTS & TELEGRAPHS ----------
+//tentacle beam effects and telegraphs
 function drawBoss() {
   if (!boss.active || boss.defeated) return;
 
@@ -1137,16 +1126,25 @@ function drawBoss() {
   const now = performance.now();
   ctx.save();
 
-  // 1. Telegraph warning line for Death Beam
   if (boss.beamChargeTimer > 0) {
     const pulse = 0.45 + 0.55 * Math.abs(Math.sin(now / 55));
-    // Wide ambient danger glow
+    const beamX = boss.x + 30;
+    const bY    = boss.beamY;
+    const tilt  = -(boss.beamTilt || 0);
+    const startX = -200 * S;
+    const beamLen = beamX - startX;
+
+    ctx.save();
+    ctx.translate(beamX, bY);
+    ctx.rotate(tilt);
+    ctx.translate(-beamX, -bY);
+
     ctx.save();
     ctx.globalAlpha = pulse * 0.18;
     ctx.fillStyle = '#ff0033';
-    ctx.fillRect(0, boss.beamY - 40 * S, boss.x + 30, 80 * S);
+    ctx.fillRect(startX, bY - 40 * S, beamLen, 80 * S);
     ctx.restore();
-    // Dashed centre line
+
     ctx.save();
     ctx.globalAlpha = pulse;
     ctx.strokeStyle = `hsl(${(now / 6) % 40}, 100%, 55%)`;
@@ -1156,20 +1154,29 @@ function drawBoss() {
     ctx.shadowBlur = 14;
     ctx.shadowColor = '#ff2200';
     ctx.beginPath();
-    ctx.moveTo(0, boss.beamY);
-    ctx.lineTo(boss.x + 30, boss.beamY);
+    ctx.moveTo(startX, bY);
+    ctx.lineTo(beamX, bY);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
+
+    ctx.restore();
   }
 
-  // 2. Active lethal Death Beam — full cinematic treatment
   if (boss.beamFiringTimer > 0) {
     const beamX = boss.x + 40;
     const bY    = boss.beamY;
     const tick  = now / 40;
+    const tilt  = -(boss.beamTilt || 0);
+    const startX = -200 * S;
+    const beamLen = beamX - startX;
 
-    // ── Layer A: Massive outer atmospheric glow ──
+    ctx.save();
+    ctx.translate(beamX, bY);
+    ctx.rotate(tilt);
+    ctx.translate(-beamX, -bY);
+
+    // outer glow
     ctx.save();
     ctx.globalAlpha = 0.22 + 0.12 * Math.sin(tick * 1.7);
     const outerH = 120 * S;
@@ -1180,10 +1187,9 @@ function drawBoss() {
     outerG.addColorStop(0.7,  'rgba(180,0,60,0.6)');
     outerG.addColorStop(1,    'rgba(0,0,0,0)');
     ctx.fillStyle = outerG;
-    ctx.fillRect(0, bY - outerH, beamX, outerH * 2);
+    ctx.fillRect(startX, bY - outerH, beamLen, outerH * 2);
     ctx.restore();
 
-    // ── Layer B: Mid energy beam ──
     ctx.save();
     const midH = 36 * S;
     ctx.shadowBlur = 40;
@@ -1195,20 +1201,19 @@ function drawBoss() {
     midG.addColorStop(0.8,  '#cc0033');
     midG.addColorStop(1,    'rgba(255,0,60,0)');
     ctx.fillStyle = midG;
-    ctx.fillRect(0, bY - midH, beamX, midH * 2);
+    ctx.fillRect(startX, bY - midH, beamLen, midH * 2);
     ctx.restore();
 
-    // ── Layer C: Chromatic aberration fringe (offset copies) ──
     ctx.save();
     ctx.globalAlpha = 0.28;
     const fringeH = 14 * S;
     ctx.fillStyle = '#6600ff';
-    ctx.fillRect(0, bY - fringeH - 18 * S, beamX, fringeH);
+    ctx.fillRect(startX, bY - fringeH - 18 * S, beamLen, fringeH);
     ctx.fillStyle = '#ff6600';
-    ctx.fillRect(0, bY + 18 * S,            beamX, fringeH);
+    ctx.fillRect(startX, bY + 18 * S,            beamLen, fringeH);
     ctx.restore();
 
-    // ── Layer D: Blazing white-hot core ──
+  
     ctx.save();
     const coreH = 10 * S;
     ctx.shadowBlur = 30;
@@ -1220,10 +1225,10 @@ function drawBoss() {
     coreG.addColorStop(0.8, '#ff8899');
     coreG.addColorStop(1,   'rgba(255,200,200,0)');
     ctx.fillStyle = coreG;
-    ctx.fillRect(0, bY - coreH, beamX, coreH * 2);
+    ctx.fillRect(startX, bY - coreH, beamLen, coreH * 2);
     ctx.restore();
 
-    // ── Layer E: Electricity arc tendrils ──
+ 
     ctx.save();
     ctx.strokeStyle = '#ff88aa';
     ctx.lineWidth = 1.8 * S;
@@ -1235,7 +1240,7 @@ function drawBoss() {
       const side = a % 2 === 0 ? -1 : 1;
       const spread = (22 + a * 14) * S;
       ctx.beginPath();
-      let ax = 0;
+      let ax = startX;
       ctx.moveTo(ax, bY);
       while (ax < beamX) {
         const step = 28 + Math.random() * 22;
@@ -1247,19 +1252,19 @@ function drawBoss() {
     }
     ctx.restore();
 
-    // ── Layer F: Animated scanline pulse ──
+
     ctx.save();
     const scanY = bY + Math.sin(tick * 3.5) * 18 * S;
     ctx.globalAlpha = 0.35 + 0.25 * Math.sin(tick * 5);
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 3 * S;
     ctx.beginPath();
-    ctx.moveTo(0, scanY);
+    ctx.moveTo(startX, scanY);
     ctx.lineTo(beamX, scanY);
     ctx.stroke();
     ctx.restore();
 
-    // ── Layer G: Origin bloom on the monster ──
+
     ctx.save();
     const bloomR = 38 * S + 12 * S * Math.sin(tick * 4);
     const bloomG = ctx.createRadialGradient(beamX, bY, 3, beamX, bY, bloomR);
@@ -1272,6 +1277,8 @@ function drawBoss() {
     ctx.arc(beamX, bY, bloomR, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
+
+    ctx.restore();
   }
 
   ctx.restore();
@@ -1283,7 +1290,6 @@ function drawBossProjectiles() {
   bossProjectiles.forEach(bp => {
     ctx.save();
 
-    // 1. Outer Swirling Cosmic Aura
     const auraR = bp.radius * (bp.oneShot ? 1.6 : 1.4);
     const aura = ctx.createRadialGradient(bp.x, bp.y, bp.radius * 0.3, bp.x, bp.y, auraR);
     if (bp.oneShot) {
@@ -1304,7 +1310,6 @@ function drawBossProjectiles() {
     ctx.arc(bp.x, bp.y, auraR, 0, Math.PI * 2);
     ctx.fill();
 
-    // 2. Dark Void Core with Neon Rim
     ctx.shadowBlur = bp.oneShot ? 22 : 14;
     ctx.shadowColor = bp.color;
 
@@ -1318,7 +1323,7 @@ function drawBossProjectiles() {
     ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // 3. Orbiting Plasma Tendril Sparks
+ 
     const sparks = bp.oneShot ? 5 : 3;
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 1.5;
@@ -1334,7 +1339,7 @@ function drawBossProjectiles() {
     }
 
     if (bp.oneShot) {
-      // Rotating Spiked Crown for Deadly One-Shot Orb
+
       ctx.strokeStyle = '#ff3366';
       ctx.lineWidth = 2.5 * S;
       ctx.beginPath();
@@ -1352,7 +1357,6 @@ function drawBossProjectiles() {
   });
 }
 
-// ---------- DRAW: PORTAL ----------
 function drawPortal() {
   if (!portal.active) return;
 
@@ -1360,32 +1364,19 @@ function drawPortal() {
   const cy = portal.y + portal.h / 2;
   ctx.save();
 
-  const halo = ctx.createRadialGradient(cx, cy, 15, cx, cy, portal.w);
-  halo.addColorStop(0, 'rgba(90,0,200,0.4)');
-  halo.addColorStop(0.45, 'rgba(0,160,255,0.2)');
+  const halo = ctx.createRadialGradient(cx, cy, 15, cx, cy, portal.w * 0.55);
+  halo.addColorStop(0, 'rgba(150, 60, 220, 0.35)');
+  halo.addColorStop(0.5, 'rgba(255, 200, 50, 0.15)');
   halo.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = halo;
   ctx.beginPath();
-  ctx.ellipse(cx, cy, portal.w * 1.1, portal.h * 0.75, 0, 0, Math.PI * 2);
+  ctx.arc(cx, cy, portal.w * 0.55, 0, Math.PI * 2);
   ctx.fill();
 
   if (imgOk(images.portal)) {
     ctx.drawImage(images.portal, portal.x, portal.y, portal.w, portal.h);
-  } else {
-    ctx.strokeStyle = '#00eaff';
-    ctx.lineWidth = 8;
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, portal.w * 0.28, portal.h * 0.4, 0, 0, Math.PI * 2);
-    ctx.stroke();
   }
 
-  const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 330);
-  ctx.globalAlpha = 0.25 + pulse * 0.2;
-  ctx.strokeStyle = '#00eaff';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, portal.w * 0.32, portal.h * 0.42, 0, 0, Math.PI * 2);
-  ctx.stroke();
   ctx.restore();
 
   if (portal.stopped) {
@@ -1400,7 +1391,7 @@ function drawPortal() {
   }
 }
 
-// ---------- DRAW: PICKUPS ----------
+
 function drawPickups() {
   pickups.forEach(pickup => {
     const def = PICKUPS[pickup.type];
@@ -1425,7 +1416,7 @@ function drawPickups() {
   });
 }
 
-// ---------- DRAW: ASTEROIDS ----------
+
 function drawAsteroids() {
   asteroids.forEach(asteroid => {
     const damaged = asteroid.hp < asteroid.maxHp;
@@ -1451,7 +1442,7 @@ function drawAsteroids() {
   });
 }
 
-// ---------- DRAW: LASERS (HYPER-PLASMA BEAM) ----------
+
 function drawLasers() {
   const time = performance.now() / 60;
   lasers.forEach(laser => {
@@ -1464,7 +1455,6 @@ function drawLasers() {
     const coreHeight = 5.5 * S;
     const glowHeight = 16 * S;
 
-    // 1. Wide Outer Cyan/Magenta Plasma Glow Sheath
     ctx.save();
     ctx.shadowBlur = 18;
     ctx.shadowColor = '#00f5ff';
@@ -1479,7 +1469,7 @@ function drawLasers() {
     ctx.fill();
     ctx.restore();
 
-    // 2. High-Energy Cyan Beam Shaft
+  
     const beamGrad = ctx.createLinearGradient(-12, 0, length, 0);
     beamGrad.addColorStop(0, 'rgba(0, 245, 255, 0)');
     beamGrad.addColorStop(0.2, '#00c8ff');
@@ -1488,13 +1478,13 @@ function drawLasers() {
     ctx.fillStyle = beamGrad;
     ctx.fillRect(-4, -coreHeight / 2, length + 4, coreHeight);
 
-    // 3. Ultra-Bright White Hot Core Laser
+ 
     ctx.fillStyle = '#ffffff';
     ctx.shadowBlur = 8;
     ctx.shadowColor = '#ffffff';
     ctx.fillRect(8, -coreHeight * 0.28, length - 8, coreHeight * 0.56);
 
-    // 4. Diamond-Shaped Armor-Piercing Tip
+
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
     ctx.moveTo(length + 6, 0);
@@ -1504,7 +1494,7 @@ function drawLasers() {
     ctx.closePath();
     ctx.fill();
 
-    // 5. High-frequency particle ring trailing behind
+   
     ctx.strokeStyle = 'rgba(0, 245, 255, 0.6)';
     ctx.lineWidth = 1.5;
     const ringX = -10 + (time % 8);
@@ -1516,7 +1506,7 @@ function drawLasers() {
   });
 }
 
-// ---------- DRAW: PARTICLES ----------
+
 function drawParticles() {
   particles.forEach(particle => {
     ctx.save();
@@ -1531,7 +1521,6 @@ function drawParticles() {
   });
 }
 
-// ---------- DRAW: PLAYER ----------
 function drawPlayer() {
   const blinking = player.invincible && Math.floor(Date.now() / 100) % 2 === 0;
   if (blinking) return;
@@ -1573,7 +1562,6 @@ function drawPlayer() {
   ctx.restore();
 }
 
-// ---------- DRAW: FLOATING TEXT ----------
 function drawFloaters() {
   floaters.forEach(floater => {
     ctx.save();
@@ -1588,13 +1576,12 @@ function drawFloaters() {
   });
 }
 
-// ---------- DRAW: HUD ----------
+
 function drawHUDLayer(W, H) {
   ctx.save();
   ctx.textAlign = 'center';
   ctx.font = `${Math.max(8, Math.round(9 * S))}px "Press Start 2P", monospace`;
 
-  // One clear objective and one progress bar.
   if (!portal.active) {
     if (boss.active && !boss.defeated) {
       ctx.fillStyle = '#ff3366';
@@ -1611,7 +1598,7 @@ function drawHUDLayer(W, H) {
     }
   }
 
-  // Short portal announcement.
+
   if (portalNoticeTimer > 0 && portal.active) {
     ctx.globalAlpha = 0.8 + 0.2 * Math.sin(performance.now() / 130);
     ctx.font = `${Math.max(12, Math.round(15 * S))}px "Press Start 2P", monospace`;
@@ -1623,7 +1610,6 @@ function drawHUDLayer(W, H) {
     ctx.globalAlpha = 1;
   }
 
-  // Active power-ups only; no extra clutter.
   const active = [
     ['SHIELD', player.shield, '#00eaff'],
     ['RAPID FIRE', player.rapid, '#ffd84d'],
@@ -1642,7 +1628,6 @@ function drawHUDLayer(W, H) {
     ctx.fillRect(130, y - 8, 90 * Math.min(1, item[1] / PICKUP_DURATION), 6);
   });
 
-  // Controls are shown briefly, then disappear.
   if (runTime < 8000 && !portal.active) {
     ctx.globalAlpha = Math.min(1, (8000 - runTime) / 1800);
     ctx.font = `${Math.max(8, Math.round(9 * S))}px "Press Start 2P", monospace`;
@@ -1662,7 +1647,7 @@ function formatTime(ms) {
   return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
-// ---------- DOM HUD ----------
+// DOM HUD
 function updateHUD() {
   const scoreElement = document.getElementById('score-val');
   const levelElement = document.getElementById('level-val');
@@ -1671,6 +1656,7 @@ function updateHUD() {
   updateHPBar();
 }
 
+// Baymax HP bar
 function updateHPBar() {
   const fill = document.getElementById('hp-fill');
   if (!fill) return;
@@ -1695,7 +1681,7 @@ if (!document.getElementById('baymax-hp-style')) {
   document.head.appendChild(style);
 }
 
-// ---------- END GAME ----------
+// End game
 function endGame(result) {
   if (gameState !== 'playing') return;
   gameState = result;
@@ -1753,7 +1739,7 @@ function hideAllOverlays() {
   if (levelOverlay) levelOverlay.style.opacity = '0';
 }
 
-// ---------- GAME LOOP ----------
+// Game loop
 function loop(timestamp) {
   const dt = lastTime ? Math.min(timestamp - lastTime, 34) : 16.667;
   lastTime = timestamp;
@@ -1764,7 +1750,7 @@ function loop(timestamp) {
   }
 }
 
-// ---------- PUBLIC ENTRY POINTS ----------
+// Entry points
 function startGame() {
   cancelAnimationFrame(animId);
   hideAllOverlays();
@@ -1780,7 +1766,7 @@ function restartGame() {
   startGame();
 }
 
-// ---------- BOOT ----------
+// Boot
 resizeCanvas();
 loadImages(() => {
   buildMenuStars();
