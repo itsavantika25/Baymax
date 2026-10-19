@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baymax Runner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-wrapper">
+    <!-- START SCREEN -->
+    <div id="start-screen" class="overlay active">
+      <div class="start-content">
+        <div class="title-glow">
+          <h1 class="game-title">BAYMAX</h1>
+         
+        </div>
+        <div class="start-baymax-art">
+          <img src="assets/game assets/baymax high hp.svg" alt="Baymax" class="menu-baymax" />
+        </div>
+        <div class="controls-hint">
+          <div class="key-hint"><span class="key">↑</span><span class="key">↓</span> Move</div>
+          <div class="key-hint"><span class="key">SPACE</span> Shoot Laser</div>
+        </div>
+        <button id="start-btn" class="btn-primary" onclick="startGame()">LAUNCH</button>
+      </div>
+      <div class="star-field" id="menu-stars"></div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameover-screen" class="overlay">
+      <div class="go-content">
+        <div class="go-title">SYSTEM FAILURE</div>
+        <div class="go-baymax">
+          <img src="assets/game assets/baymax low hp.svg" alt="Baymax KO" class="go-img" />
+        </div>
+        <div class="go-score">Score: <span id="go-score-val">0</span></div>
+        <div class="go-level">Level Reached: <span id="go-level-val">1</span></div>
+        <button class="btn-primary" onclick="restartGame()">TRY AGAIN</button>
+      </div>
+    </div>
+
+    <!-- WIN SCREEN -->
+    <div id="win-screen" class="overlay">
+      <div class="win-content">
+        <div class="win-title">ESCAPED!</div>
+        <div class="win-baymax">
+          <img src="assets/game assets/baymax high hp.svg" alt="Baymax Win" class="win-img" />
+        </div>
+        <div class="win-score">Score: <span id="win-score-val">0</span></div>
+        <button class="btn-primary" onclick="restartGame()">PLAY AGAIN</button>
+      </div>
+      <div class="win-particles" id="win-particles"></div>
+    </div>
+
+    <!-- LEVEL UP OVERLAY -->
+    <div id="levelup-overlay">
+      <div class="levelup-text">LEVEL UP!</div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+      <div id="hp-bar-container">
+        <img src="assets/game assets/mini baymax icon.svg" alt="HP" class="hp-icon" />
+        <div id="hp-label">HP</div>
+        <div id="hp-track">
+          <div id="hp-fill"></div>
+          <div id="hp-shimmer"></div>
+        </div>
+      </div>
+      <div id="score-display">SCORE: <span id="score-val">0</span></div>
+      <div id="level-display">LV <span id="level-val">1</span></div>
+      <div id="boss-hp-container">
+        <div id="boss-hp-track">
+          <div id="boss-hp-fill"></div>
+        </div>
+        <div id="boss-hp-label">HP</div>
+        <img src="assets/game assets/Monster hp icon.PNG" alt="Boss" class="boss-hp-icon" />
+      </div>
+    </div>
+
+    <!-- BOSS SPRITE (Animated GIF) -->
+    <img id="boss-sprite" src="assets/game assets/Transparentbgmonstie.GIF" alt="Boss Monster" />
+
+    <!-- CANVAS -->
+    <canvas id="game-canvas"></canvas>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
