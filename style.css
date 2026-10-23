@@ -1,48 +1,53 @@
 @font-face {
-  font-family: 'DePixel';
-  src: url('assets/fonts/depixel/depixelklein.woff2') format('woff2'),
-    url('assets/fonts/depixel/depixelklein.woff') format('woff'),
-    url('assets/fonts/depixel/DePixelKlein.ttf') format('truetype');
+  font-family: "DePixel";
+  src:
+    url("assets/fonts/depixel/depixelklein.woff2") format("woff2"),
+    url("assets/fonts/depixel/depixelklein.woff") format("woff"),
+    url("assets/fonts/depixel/DePixelKlein.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'DePixel';
-  src: url('assets/fonts/depixel/depixelhalbfett.woff2') format('woff2'),
-    url('assets/fonts/depixel/depixelhalbfett.woff') format('woff'),
-    url('assets/fonts/depixel/DePixelHalbfett.ttf') format('truetype');
+  font-family: "DePixel";
+  src:
+    url("assets/fonts/depixel/depixelhalbfett.woff2") format("woff2"),
+    url("assets/fonts/depixel/depixelhalbfett.woff") format("woff"),
+    url("assets/fonts/depixel/DePixelHalbfett.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'DePixel Breit';
-  src: url('assets/fonts/depixel/depixelbreit.woff2') format('woff2'),
-    url('assets/fonts/depixel/depixelbreit.woff') format('woff'),
-    url('assets/fonts/depixel/DePixelBreit.ttf') format('truetype');
+  font-family: "DePixel Breit";
+  src:
+    url("assets/fonts/depixel/depixelbreit.woff2") format("woff2"),
+    url("assets/fonts/depixel/depixelbreit.woff") format("woff"),
+    url("assets/fonts/depixel/DePixelBreit.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'DePixel Breit';
-  src: url('assets/fonts/depixel/depixelbreitfett.woff2') format('woff2'),
-    url('assets/fonts/depixel/depixelbreitfett.woff') format('woff'),
-    url('assets/fonts/depixel/DePixelBreitFett.ttf') format('truetype');
+  font-family: "DePixel Breit";
+  src:
+    url("assets/fonts/depixel/depixelbreitfett.woff2") format("woff2"),
+    url("assets/fonts/depixel/depixelbreitfett.woff") format("woff"),
+    url("assets/fonts/depixel/DePixelBreitFett.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'DePixel Schmal';
-  src: url('assets/fonts/depixel/depixelschmal.woff2') format('woff2'),
-    url('assets/fonts/depixel/depixelschmal.woff') format('woff'),
-    url('assets/fonts/depixel/DePixelSchmal.ttf') format('truetype');
+  font-family: "DePixel Schmal";
+  src:
+    url("assets/fonts/depixel/depixelschmal.woff2") format("woff2"),
+    url("assets/fonts/depixel/depixelschmal.woff") format("woff"),
+    url("assets/fonts/depixel/DePixelSchmal.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -75,8 +80,8 @@
   --panel: rgba(13, 0, 20, 0.82);
   --panel-border: rgba(255, 194, 232, 0.17);
 
-  --font-pixel: 'DePixel', 'Press Start 2P', monospace;
-  --font-display: 'DePixel Breit', 'Orbitron', sans-serif;
+  --font-pixel: "DePixel", "Press Start 2P", monospace;
+  --font-display: "DePixel Breit", "Orbitron", sans-serif;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -122,12 +127,9 @@ button:focus-visible {
   height: 100dvh;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 52% 42%,
-      rgba(61, 0, 96, 0.25),
-      transparent 58%),
+    radial-gradient(ellipse at 52% 42%, rgba(61, 0, 96, 0.25), transparent 58%),
     var(--purple-deep);
 }
-
 
 #game-canvas {
   position: absolute;
@@ -154,11 +156,12 @@ button:focus-visible {
   padding: 32px 20px;
   overflow-y: auto;
 
-  background:
-    radial-gradient(ellipse at 50% 42%,
-      rgba(48, 0, 70, 0.76) 0%,
-      rgba(20, 0, 31, 0.91) 48%,
-      rgba(7, 0, 13, 0.97) 100%);
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    rgba(48, 0, 70, 0.76) 0%,
+    rgba(20, 0, 31, 0.91) 48%,
+    rgba(7, 0, 13, 0.97) 100%
+  );
 
   opacity: 0;
   visibility: hidden;
@@ -175,9 +178,8 @@ button:focus-visible {
   pointer-events: auto;
 }
 
-
 .overlay::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -187,20 +189,24 @@ button:focus-visible {
     radial-gradient(circle, #fff 0.7px, transparent 1px),
     radial-gradient(circle, #ff4db8 0.7px, transparent 1px);
 
-  background-size: 71px 83px, 113px 127px;
-  background-position: 12px 19px, 43px 62px;
+  background-size:
+    71px 83px,
+    113px 127px;
+  background-position:
+    12px 19px,
+    43px 62px;
 }
 
 /* Start screen */
 
 #start-screen {
   background:
-    radial-gradient(ellipse at 50% 43%,
-      rgba(70, 0, 100, 0.40),
-      transparent 48%),
-    radial-gradient(ellipse at center,
+    radial-gradient(ellipse at 50% 43%, rgba(70, 0, 100, 0.4), transparent 48%),
+    radial-gradient(
+      ellipse at center,
       rgba(25, 0, 40, 0.91),
-      rgba(7, 0, 13, 0.98));
+      rgba(7, 0, 13, 0.98)
+    );
 }
 
 .start-content {
@@ -251,7 +257,6 @@ button:focus-visible {
   opacity: 0.78;
 }
 
-
 .start-baymax-art {
   position: relative;
   display: grid;
@@ -264,7 +269,7 @@ button:focus-visible {
 }
 
 .start-baymax-art::after {
-  content: '';
+  content: "";
   position: absolute;
   z-index: -1;
 
@@ -396,8 +401,7 @@ button:focus-visible {
   pointer-events: none;
 }
 
-
-.star-field>* {
+.star-field > * {
   pointer-events: none;
 }
 
@@ -486,10 +490,12 @@ button:focus-visible {
 
   width: 35%;
 
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(255, 255, 255, 0.22),
-      transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.22),
+    transparent
+  );
 
   animation: shimmer 3.2s linear infinite;
   pointer-events: none;
@@ -516,7 +522,6 @@ button:focus-visible {
   text-shadow: none;
 }
 
-
 #boss-hp-container {
   display: flex;
   align-items: center;
@@ -524,7 +529,9 @@ button:focus-visible {
   margin-left: auto;
   opacity: 0;
   transform: translateY(-8px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
   pointer-events: none;
 }
 
@@ -569,7 +576,6 @@ button:focus-visible {
   filter: drop-shadow(0 0 6px rgba(255, 77, 184, 0.6));
 }
 
-
 #boss-sprite {
   position: absolute;
   z-index: 15;
@@ -582,7 +588,8 @@ button:focus-visible {
 }
 
 #boss-sprite.flash {
-  filter: brightness(2.4) contrast(1.5) drop-shadow(0 0 16px rgba(255, 255, 255, 0.9));
+  filter: brightness(2.4) contrast(1.5)
+    drop-shadow(0 0 16px rgba(255, 255, 255, 0.9));
 }
 
 #boss-sprite.poof {
@@ -613,9 +620,7 @@ button:focus-visible {
 
 #gameover-screen {
   background:
-    radial-gradient(ellipse at 50% 43%,
-      rgba(95, 0, 28, 0.35),
-      transparent 55%),
+    radial-gradient(ellipse at 50% 43%, rgba(95, 0, 28, 0.35), transparent 55%),
     rgba(8, 0, 13, 0.95);
 }
 
@@ -648,7 +653,9 @@ button:focus-visible {
   line-height: 1.3;
   letter-spacing: 0.08em;
 
-  text-shadow: 0 0 20px rgba(255, 50, 80, 0.5), 0 0 45px rgba(255, 50, 80, 0.25);
+  text-shadow:
+    0 0 20px rgba(255, 50, 80, 0.5),
+    0 0 45px rgba(255, 50, 80, 0.25);
 
   animation: shakeFade 450ms ease-out both;
 }
@@ -686,9 +693,11 @@ button:focus-visible {
 
 #win-screen {
   background:
-    radial-gradient(ellipse at 50% 42%,
+    radial-gradient(
+      ellipse at 50% 42%,
       rgba(130, 70, 0, 0.32),
-      transparent 55%),
+      transparent 55%
+    ),
     rgba(8, 0, 13, 0.95);
 }
 
@@ -720,7 +729,9 @@ button:focus-visible {
   line-height: 1.3;
   letter-spacing: 0.08em;
 
-  text-shadow: 0 0 22px rgba(255, 215, 119, 0.55), 0 0 50px rgba(255, 190, 50, 0.28);
+  text-shadow:
+    0 0 22px rgba(255, 215, 119, 0.55),
+    0 0 50px rgba(255, 190, 50, 0.28);
 }
 
 .win-baymax {
@@ -802,7 +813,6 @@ button:focus-visible {
 /* Animations */
 
 @keyframes titlePulse {
-
   0%,
   100% {
     text-shadow:
@@ -818,7 +828,6 @@ button:focus-visible {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -913,7 +922,6 @@ button:focus-visible {
   }
 }
 
-
 @media (max-width: 430px) {
   #hud {
     top: 9px;
@@ -997,7 +1005,6 @@ button:focus-visible {
   }
 }
 
-
 @media (max-height: 600px) {
   .overlay {
     align-items: center;
@@ -1042,8 +1049,69 @@ button:focus-visible {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* --- Tamagotchi Training Arc Integration Styles --- */
 
+.menu-btn-group,
+.go-actions,
+.win-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.btn-secondary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 48px;
+  padding: 14px 24px;
+
+  color: #ffc2e8;
+  background: rgba(30, 10, 50, 0.75);
+
+  border: 1px solid rgba(0, 245, 255, 0.6);
+  border-radius: 3px;
+
+  font-family: var(--font-display);
+  font-size: clamp(0.6rem, 1.35vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+
+  cursor: pointer;
+  user-select: none;
+  box-shadow:
+    0 0 12px rgba(0, 245, 255, 0.18),
+    inset 0 0 10px rgba(0, 245, 255, 0.08);
+
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms var(--ease-out);
+}
+
+.btn-secondary:hover {
+  background: rgba(50, 15, 80, 0.9);
+  border-color: #00f5ff;
+  color: #ffffff;
+  box-shadow:
+    0 0 20px rgba(0, 245, 255, 0.4),
+    inset 0 0 14px rgba(0, 245, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {

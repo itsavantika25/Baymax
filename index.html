@@ -1,93 +1,221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Baymax</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div id="game-wrapper">
-    <!-- Start screen -->
-    <div id="start-screen" class="overlay active">
-      <div class="start-content">
-        <div class="title-glow">
-          <h1 class="game-title">BAYMAX</h1>
-         
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baymax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="game-wrapper">
+      <div id="start-screen" class="overlay active">
+        <div class="start-content">
+          <div class="title-glow">
+            <h1 class="game-title">BAYMAX</h1>
+          </div>
+          <div class="start-baymax-art">
+            <img
+              src="assets/game assets/baymax high hp.svg"
+              alt="Baymax"
+              class="menu-baymax"
+            />
+          </div>
+          <div class="controls-hint">
+            <div class="key-hint">
+              <span class="key">↑</span><span class="key">↓</span> Move
+            </div>
+            <div class="key-hint">
+              <span class="key">SPACE</span> Shoot Laser
+            </div>
+          </div>
+
+          <div class="menu-btn-group">
+            <button id="start-btn" class="btn-primary" onclick="startGame()">
+              LAUNCH
+            </button>
+            <button
+              id="training-btn"
+              class="btn-secondary"
+              onclick="goToTraining()"
+            >
+              TAMAGOTCHI
+            </button>
+          </div>
         </div>
-        <div class="start-baymax-art">
-          <img src="assets/game assets/baymax high hp.svg" alt="Baymax" class="menu-baymax" />
-        </div>
-        <div class="controls-hint">
-          <div class="key-hint"><span class="key">↑</span><span class="key">↓</span> Move</div>
-          <div class="key-hint"><span class="key">SPACE</span> Shoot Laser</div>
-        </div>
-        <button id="start-btn" class="btn-primary" onclick="startGame()">LAUNCH</button>
+        <div class="star-field" id="menu-stars"></div>
       </div>
-      <div class="star-field" id="menu-stars"></div>
+
+      <!-- Game over screen -->
+      <div id="gameover-screen" class="overlay">
+        <div class="go-content">
+          <div class="go-title">SYSTEM FAILURE</div>
+          <div class="go-baymax">
+            <img
+              src="assets/game assets/baymax low hp.svg"
+              alt="Baymax KO"
+              class="go-img"
+            />
+          </div>
+          <div class="go-score">Score: <span id="go-score-val">0</span></div>
+          <div class="go-level">
+            Level Reached: <span id="go-level-val">1</span>
+          </div>
+          <div class="go-actions">
+            <button class="btn-primary" onclick="restartGame()">
+              TRY AGAIN
+            </button>
+            <button class="btn-secondary" onclick="goToTraining()">
+              TAMAGOTCHI
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Win screen -->
+      <div id="win-screen" class="overlay">
+        <div class="win-content">
+          <div class="win-title">ESCAPED!</div>
+          <div class="win-baymax">
+            <img
+              src="assets/game assets/baymax high hp.svg"
+              alt="Baymax Win"
+              class="win-img"
+            />
+          </div>
+          <div class="win-score">Score: <span id="win-score-val">0</span></div>
+          <div class="win-actions">
+            <button class="btn-primary" onclick="restartGame()">
+              PLAY AGAIN
+            </button>
+            <button class="btn-secondary" onclick="goToTraining()">
+              TAMAGOTCHI
+            </button>
+          </div>
+        </div>
+        <div class="win-particles" id="win-particles"></div>
+      </div>
+
+      <!-- Level-up overlay -->
+      <div id="levelup-overlay">
+        <div class="levelup-text">LEVEL UP!</div>
+      </div>
+
+      <!-- HUD -->
+      <div id="hud">
+        <div id="hp-bar-container">
+          <img
+            src="assets/game assets/mini baymax icon.svg"
+            alt="HP"
+            class="hp-icon"
+          />
+          <div id="hp-label">HP</div>
+          <div id="hp-track">
+            <div id="hp-fill"></div>
+            <div id="hp-shimmer"></div>
+          </div>
+        </div>
+        <div id="score-display">SCORE: <span id="score-val">0</span></div>
+        <div id="level-display">LV <span id="level-val">1</span></div>
+        <div id="boss-hp-container">
+          <div id="boss-hp-track">
+            <div id="boss-hp-fill"></div>
+          </div>
+          <div id="boss-hp-label">HP</div>
+          <img
+            src="assets/game assets/Monster hp icon.PNG"
+            alt="Boss"
+            class="boss-hp-icon"
+          />
+        </div>
+      </div>
+
+      <!-- Monstie-->
+      <img
+        id="boss-sprite"
+        src="assets/game assets/Transparentbgmonstie.GIF"
+        alt="Boss Monster"
+      />
+
+      <canvas id="game-canvas"></canvas>
     </div>
 
-    <!-- Game over screen -->
-    <div id="gameover-screen" class="overlay">
-      <div class="go-content">
-        <div class="go-title">SYSTEM FAILURE</div>
-        <div class="go-baymax">
-          <img src="assets/game assets/baymax low hp.svg" alt="Baymax KO" class="go-img" />
-        </div>
-        <div class="go-score">Score: <span id="go-score-val">0</span></div>
-        <div class="go-level">Level Reached: <span id="go-level-val">1</span></div>
-        <button class="btn-primary" onclick="restartGame()">TRY AGAIN</button>
-      </div>
+    <!-- Tamagotchi Popup -->
+    <div
+      id="tama-popup-backdrop"
+      onclick="closeTamaPopup()"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+        z-index: 9000;
+        align-items: center;
+        justify-content: center;
+      "
+    ></div>
+    <div
+      id="tama-popup"
+      style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.85);
+        opacity: 0;
+        z-index: 9001;
+        width: min(94vw, calc(100vh - 40px), 680px);
+        aspect-ratio: 1;
+        transition:
+          transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.2s ease;
+      "
+    >
+      <button
+        onclick="closeTamaPopup()"
+        style="
+          position: absolute;
+          top: -14px;
+          right: -14px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: rgba(30, 10, 60, 0.95);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #e9defa;
+          font-size: 14px;
+          cursor: pointer;
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+          font-family: sans-serif;
+        "
+        title="Close"
+      >
+        ✕
+      </button>
+      <iframe
+        id="tama-iframe"
+        src=""
+        style="
+          width: 100%;
+          height: 100%;
+          border: none;
+          border-radius: 4px;
+          display: block;
+        "
+        title="Baymax Tamagotchi"
+      ></iframe>
     </div>
 
-    <!-- Win screen -->
-    <div id="win-screen" class="overlay">
-      <div class="win-content">
-        <div class="win-title">ESCAPED!</div>
-        <div class="win-baymax">
-          <img src="assets/game assets/baymax high hp.svg" alt="Baymax Win" class="win-img" />
-        </div>
-        <div class="win-score">Score: <span id="win-score-val">0</span></div>
-        <button class="btn-primary" onclick="restartGame()">PLAY AGAIN</button>
-      </div>
-      <div class="win-particles" id="win-particles"></div>
-    </div>
-
-    <!-- Level-up overlay -->
-    <div id="levelup-overlay">
-      <div class="levelup-text">LEVEL UP!</div>
-    </div>
-
-    <!-- HUD -->
-    <div id="hud">
-      <div id="hp-bar-container">
-        <img src="assets/game assets/mini baymax icon.svg" alt="HP" class="hp-icon" />
-        <div id="hp-label">HP</div>
-        <div id="hp-track">
-          <div id="hp-fill"></div>
-          <div id="hp-shimmer"></div>
-        </div>
-      </div>
-      <div id="score-display">SCORE: <span id="score-val">0</span></div>
-      <div id="level-display">LV <span id="level-val">1</span></div>
-      <div id="boss-hp-container">
-        <div id="boss-hp-track">
-          <div id="boss-hp-fill"></div>
-        </div>
-        <div id="boss-hp-label">HP</div>
-        <img src="assets/game assets/Monster hp icon.PNG" alt="Boss" class="boss-hp-icon" />
-      </div>
-    </div>
-
-    <!-- Monstie-->
-    <img id="boss-sprite" src="assets/game assets/Transparentbgmonstie.GIF" alt="Boss Monster" />
-
-    <canvas id="game-canvas"></canvas>
-  </div>
-
-  <script src="game.js"></script>
-</body>
+    <script src="game.js"></script>
+  </body>
 </html>
